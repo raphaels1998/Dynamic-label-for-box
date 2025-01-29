@@ -40,10 +40,8 @@
                 rgba(255,255,255,0) 80%
             );
 
-            /* Smooth transitions for all properties */
-            transition: 
-                transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s ease;
+            /* Base transition for all states */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .box.expanded {
@@ -61,17 +59,20 @@
                 0 30px 60px rgba(0,0,0,0.1),
                 inset 0 -12px 18px rgba(0,0,0,0.1),
                 inset 0 2px 4px rgba(255,255,255,0.5);
-            animation: expandBox 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes expandBox {
+        .box.shrinking {
+            animation: shrinkBox 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes shrinkBox {
             0% {
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0.5;
-            }
-            100% {
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0.5;
             }
         }
 
@@ -141,11 +142,16 @@
         overlay.addEventListener('click', () => {
             if (expandedBox) {
                 const placeholder = container.querySelector('.box-placeholder');
-                container.insertBefore(expandedBox, placeholder);
-                if (placeholder) placeholder.remove();
-                expandedBox.classList.remove('expanded');
-                overlay.classList.remove('active');
-                expandedBox = null;
+                expandedBox.classList.add('shrinking');
+                
+                // Wait for animation to complete before moving box back
+                setTimeout(() => {
+                    expandedBox.classList.remove('expanded', 'shrinking');
+                    container.insertBefore(expandedBox, placeholder);
+                    if (placeholder) placeholder.remove();
+                    overlay.classList.remove('active');
+                    expandedBox = null;
+                }, 400); // Match the animation duration
             }
         });
     </script>
