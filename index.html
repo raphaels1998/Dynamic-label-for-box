@@ -26,7 +26,6 @@
             cursor: pointer;
             position: relative;
             flex-shrink: 0;
-            transform-origin: center;
             
             /* iOS-style depth effects */
             box-shadow: 
@@ -52,8 +51,12 @@
             left: 50%;
             transform: translate(-50%, -50%) scale(3);
             z-index: 2;
+        }
+
+        .box-placeholder {
             width: 175px;
             height: 175px;
+            visibility: hidden;
         }
 
         .overlay {
@@ -97,22 +100,25 @@
         const overlay = document.querySelector('.overlay');
         const container = document.querySelector('.container');
         let expandedBox = null;
-        let originalRect = null;
+        let placeholder = null;
 
         boxes.forEach(box => {
             box.addEventListener('click', () => {
                 if (!expandedBox) {
-                    originalRect = box.getBoundingClientRect();
                     expandedBox = box;
                     
-                    // Temporarily position the box
-                    box.style.position = 'fixed';
-                    box.style.top = `${originalRect.top}px`;
-                    box.style.left = `${originalRect.left}px`;
-                    box.style.width = `${originalRect.width}px`;
-                    box.style.height = `${originalRect.height}px`;
+                    // Create and insert placeholder
+                    placeholder = document.createElement('div');
+                    placeholder.className = 'box-placeholder';
+                    box.parentNode.insertBefore(placeholder, box);
                     
-                    // Move box to body
+                    // Set initial position and move to body
+                    const rect = box.getBoundingClientRect();
+                    box.style.position = 'fixed';
+                    box.style.top = `${rect.top}px`;
+                    box.style.left = `${rect.left}px`;
+                    box.style.width = `${rect.width}px`;
+                    box.style.height = `${rect.height}px`;
                     document.body.appendChild(box);
                     
                     // Trigger expansion
@@ -126,10 +132,16 @@
 
         overlay.addEventListener('click', () => {
             if (expandedBox) {
+                const rect = placeholder.getBoundingClientRect();
+                
                 expandedBox.classList.remove('expanded');
+                expandedBox.style.top = `${rect.top}px`;
+                expandedBox.style.left = `${rect.left}px`;
+                expandedBox.style.width = `${rect.width}px`;
+                expandedBox.style.height = `${rect.height}px`;
+                
                 overlay.classList.remove('active');
                 
-                // Reset box to original position
                 setTimeout(() => {
                     expandedBox.style.position = '';
                     expandedBox.style.top = '';
@@ -137,11 +149,9 @@
                     expandedBox.style.width = '';
                     expandedBox.style.height = '';
                     
-                    // Move back to container
-                    container.appendChild(expandedBox);
-                    
+                    placeholder.parentNode.replaceChild(expandedBox, placeholder);
+                    placeholder = null;
                     expandedBox = null;
-                    originalRect = null;
                 }, 400);
             }
         });
