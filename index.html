@@ -15,15 +15,19 @@
         .container {
            display: grid;
            grid-template-columns: repeat(1, auto);
-           gap: 20px;
+           gap: 40px; /* Increased gap for label space */
            justify-content: center;
+        }
+
+        .box-wrapper {
+            position: relative;
+            margin-top: 30px; /* Space for label */
         }
 
         .box {
             width: 350px;
             height: 175px;
             border-radius: 32px;
-            position: relative;
             box-shadow: 
                 0 2px 10px rgba(0,0,0,0.1),
                 0 10px 20px rgba(0,0,0,0.1),
@@ -38,33 +42,25 @@
 
         .label {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
+            top: -25px; /* Position above the box */
+            right: 10px;
+            color: #333;
             font-weight: 600;
-            font-size: 1.2rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            padding: 8px 16px;
-            border-radius: 24px;
+            font-size: 1rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             cursor: text;
-            user-select: none;
             transition: all 0.2s ease;
-        }
-
-        .label.editable {
-            background: rgba(0,0,0,0.15);
-        }
-
-        .label.editable:hover {
-            background: rgba(0,0,0,0.25);
+            min-width: 80px;
+            text-align: center;
         }
 
         .label:focus {
             outline: none;
-            user-select: text;
-            background: rgba(0,0,0,0.3);
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
         }
 
         .box.color-1 { background-color: #FF6B6B; }
@@ -76,29 +72,42 @@
 </head>
 <body>
     <div class="container">
-         <div class="box color-1"><div class="label editable" contenteditable="true">Label 1</div></div>
-         <div class="box color-2"><div class="label editable" contenteditable="true">Label 2</div></div>
-         <div class="box color-3"><div class="label editable" contenteditable="true">Label 3</div></div>
-         <div class="box color-4"><div class="label editable" contenteditable="true">Label 4</div></div>
-         <div class="box color-5"><div class="label editable" contenteditable="true">Label 5</div></div>
+        <div class="box-wrapper">
+            <div class="box color-1"></div>
+            <div class="label" contenteditable="true">Label 1</div>
+        </div>
+        <div class="box-wrapper">
+            <div class="box color-2"></div>
+            <div class="label" contenteditable="true">Label 2</div>
+        </div>
+        <div class="box-wrapper">
+            <div class="box color-3"></div>
+            <div class="label" contenteditable="true">Label 3</div>
+        </div>
+        <div class="box-wrapper">
+            <div class="box color-4"></div>
+            <div class="label" contenteditable="true">Label 4</div>
+        </div>
+        <div class="box-wrapper">
+            <div class="box color-5"></div>
+            <div class="label" contenteditable="true">Label 5</div>
+        </div>
     </div>
 
     <script>
-        document.querySelectorAll('.label.editable').forEach(label => {
-            // Save initial text
+        document.querySelectorAll('.label').forEach(label => {
+            // Save original text
             let originalText = label.textContent;
-            
+
             // Handle focus
             label.addEventListener('focus', () => {
-                label.style.userSelect = 'text';
                 if (label.textContent === originalText) {
                     label.textContent = '';
                 }
             });
 
-            // Handle blur (when losing focus)
+            // Handle blur
             label.addEventListener('blur', () => {
-                label.style.userSelect = 'none';
                 if (label.textContent.trim() === '') {
                     label.textContent = originalText;
                 }
