@@ -49,7 +49,6 @@
             position: absolute;
             top: -25px;
             left: 10px;
-            color: black;
             font-weight: 600;
             font-size: 1rem;
             padding: 6px 16px;
@@ -59,26 +58,24 @@
             min-width: 120px;
             max-width: 150px;
             text-align: center;
-            background: inherit;
-            
+            border: none;
+            background-color: inherit;
+            color: white;
+            opacity: 0.7;
         }
 
         .label:focus {
             outline: none;
-            background: inherit;
-            
+            opacity: 1;
         }
 
         .input-container {
             width: 90%;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             gap: 10px;
         }
 
         .input-container input {
-            width: 90%;
             padding: 10px;
             border: none;
             border-radius: 8px;
@@ -87,18 +84,19 @@
         }
 
         .input-container input[type="text"] {
-            max-width: 90%;
+            flex: 1;
+            max-width: 70%;
         }
 
         .input-container input[type="number"] {
-            max-width: 50%;
+            width: 80px;
         }
 
         .box.color-1 { background-color: #FF6B6B; }
         .box.color-2 { background-color: #4ECDC4; }
         .box.color-3 { background-color: #45B7D1; }
         .box.color-4 { background-color: #96CEB4; }
-        .box.color-5 { background-color: #FFEEAD; }
+        .box.color-5 { background-color: #FFEEAD; color: black; }
 
         .box.color-add {
             background-color: #e0e0e0;
@@ -123,7 +121,7 @@
 <body>
     <div class="container">
         <div class="box-wrapper">
-            <div class="label" contenteditable="true" maxlength="20">Label 1</div>
+            <input class="label" placeholder="Label" maxlength="20">
             <div class="box color-1">
                 <div class="input-container">
                     <input type="text" placeholder="Item Name" maxlength="20">
@@ -132,7 +130,7 @@
             </div>
         </div>
         <div class="box-wrapper">
-            <div class="label" contenteditable="true" maxlength="20">Label 2</div>
+            <input class="label" placeholder="Label" maxlength="20">
             <div class="box color-2">
                 <div class="input-container">
                     <input type="text" placeholder="Item Name" maxlength="20">
@@ -157,16 +155,16 @@
             function createNewBox() {
                 const newBoxWrapper = document.createElement('div');
                 newBoxWrapper.className = 'box-wrapper';
-                
-                const newLabel = document.createElement('div');
+
+                const newLabel = document.createElement('input');
                 newLabel.className = 'label';
-                newLabel.contentEditable = true;
-                newLabel.textContent = `Label ${boxCount + 1}`;
-                newLabel.setAttribute("maxlength", "20");
+                newLabel.placeholder = "Label";
+                newLabel.maxLength = 20;
 
                 const newBox = document.createElement('div');
                 newBox.className = `box ${colors[boxCount % colors.length]}`;
-                
+                newLabel.style.backgroundColor = getComputedStyle(newBox).backgroundColor;
+
                 const inputContainer = document.createElement('div');
                 inputContainer.className = 'input-container';
 
@@ -183,33 +181,16 @@
 
                 inputContainer.appendChild(itemInput);
                 inputContainer.appendChild(qtyInput);
-
                 newBox.appendChild(inputContainer);
+
                 newBoxWrapper.appendChild(newLabel);
                 newBoxWrapper.appendChild(newBox);
 
                 container.insertBefore(newBoxWrapper, addBox);
                 boxCount++;
-
-                setupLabelListeners(newLabel);
-            }
-
-            function setupLabelListeners(label) {
-                label.addEventListener('keydown', (e) => {
-                    if (e.key.length === 1 && label.textContent.length >= 20) {
-                        e.preventDefault();
-                    }
-                });
-
-                label.addEventListener('blur', () => {
-                    if (label.textContent.trim() === '') {
-                        label.textContent = `Label ${boxCount}`;
-                    }
-                });
             }
 
             addBox.addEventListener('click', createNewBox);
-            document.querySelectorAll('.label').forEach(setupLabelListeners);
         });
     </script>
 </body>
