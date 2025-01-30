@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Labeled Boxes</title>
     <style>
         body {
             display: flex;
@@ -84,10 +85,28 @@
         .box.color-4 { background-color: #96CEB4; }
         .box.color-5 { background-color: #FFEEAD; }
 
-        /* Adjust text color for better contrast on yellow */
         .box.color-5 .label {
             color: #666;
             text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
+
+        .box.color-add {
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .box.color-add:hover {
+            background-color: #d0d0d0;
+        }
+
+        .add-button {
+            font-size: 48px;
+            color: #666;
+            user-select: none;
         }
     </style>
 </head>
@@ -118,30 +137,67 @@
                 <div class="label" contenteditable="true">Label 5</div>
             </div>
         </div>
+        <div class="box-wrapper add-box">
+            <div class="box color-add">
+                <div class="add-button">+</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.querySelectorAll('.label').forEach(label => {
-            const originalText = label.textContent;
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            const addBox = document.querySelector('.add-box');
+            const colors = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5'];
+            let boxCount = document.querySelectorAll('.box-wrapper:not(.add-box)').length;
 
-            label.addEventListener('focus', () => {
-                if (label.textContent === originalText) {
-                    label.textContent = '';
-                }
-            });
+            function createNewBox() {
+                const newBoxWrapper = document.createElement('div');
+                newBoxWrapper.className = 'box-wrapper';
+                
+                const newBox = document.createElement('div');
+                newBox.className = `box ${colors[boxCount % colors.length]}`;
+                
+                const newLabel = document.createElement('div');
+                newLabel.className = 'label';
+                newLabel.contentEditable = true;
+                newLabel.textContent = `Label ${boxCount + 1}`;
+                
+                newBox.appendChild(newLabel);
+                newBoxWrapper.appendChild(newBox);
+                
+                container.insertBefore(newBoxWrapper, addBox);
+                boxCount++;
+                
+                setupLabelListeners(newLabel);
+            }
 
-            label.addEventListener('blur', () => {
-                if (label.textContent.trim() === '') {
-                    label.textContent = originalText;
-                }
-            });
+            function setupLabelListeners(label) {
+                const originalText = label.textContent;
 
-            label.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    label.blur();
-                }
-            });
+                label.addEventListener('focus', () => {
+                    if (label.textContent === originalText) {
+                        label.textContent = '';
+                    }
+                });
+
+                label.addEventListener('blur', () => {
+                    if (label.textContent.trim() === '') {
+                        label.textContent = originalText;
+                    }
+                });
+
+                label.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        label.blur();
+                    }
+                });
+            }
+
+            addBox.addEventListener('click', createNewBox);
+
+            document.querySelectorAll('.label').forEach(setupLabelListeners);
         });
     </script>
 </body>
