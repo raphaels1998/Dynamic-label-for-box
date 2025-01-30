@@ -21,7 +21,6 @@
 
         .box-wrapper {
             position: relative;
-            margin-top: 40px; /* Space for the label */
         }
 
         .box {
@@ -38,29 +37,45 @@
                 rgba(255,255,255,0.15) 0%,
                 rgba(255,255,255,0) 80%
             );
+            position: relative;
         }
 
         .label {
             position: absolute;
-            top: -30px; /* Position above the box */
-            left: 10px;
-            color: #333;
+            top: -18px;
+            left: 20px;
+            color: white;
             font-weight: 600;
             font-size: 1rem;
-            padding: 8px 16px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 8px 20px;
+            border-radius: 12px 12px 0 0;
             cursor: text;
             transition: all 0.2s ease;
             min-width: 120px;
-            border: none;
-            outline: none;
+            background: inherit;
+            box-shadow: 
+                0 -2px 8px rgba(0,0,0,0.1),
+                inset 0 -1px 2px rgba(255,255,255,0.2);
+            z-index: 2;
+        }
+
+        .label::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: inherit;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 15px 100%);
         }
 
         .label:focus {
-            background: white;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+            outline: none;
+            background: inherit;
+            box-shadow: 
+                0 -2px 12px rgba(0,0,0,0.15),
+                inset 0 -1px 4px rgba(255,255,255,0.3);
         }
 
         .box.color-1 { background-color: #FF6B6B; }
@@ -68,52 +83,59 @@
         .box.color-3 { background-color: #45B7D1; }
         .box.color-4 { background-color: #96CEB4; }
         .box.color-5 { background-color: #FFEEAD; }
+
+        /* Adjust text color for better contrast on yellow */
+        .box.color-5 .label {
+            color: #666;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box-wrapper">
-            <div class="box color-1"></div>
-            <div class="label" contenteditable="true">Label 1</div>
+            <div class="box color-1">
+                <div class="label" contenteditable="true">Label 1</div>
+            </div>
         </div>
         <div class="box-wrapper">
-            <div class="box color-2"></div>
-            <div class="label" contenteditable="true">Label 2</div>
+            <div class="box color-2">
+                <div class="label" contenteditable="true">Label 2</div>
+            </div>
         </div>
         <div class="box-wrapper">
-            <div class="box color-3"></div>
-            <div class="label" contenteditable="true">Label 3</div>
+            <div class="box color-3">
+                <div class="label" contenteditable="true">Label 3</div>
+            </div>
         </div>
         <div class="box-wrapper">
-            <div class="box color-4"></div>
-            <div class="label" contenteditable="true">Label 4</div>
+            <div class="box color-4">
+                <div class="label" contenteditable="true">Label 4</div>
+            </div>
         </div>
         <div class="box-wrapper">
-            <div class="box color-5"></div>
-            <div class="label" contenteditable="true">Label 5</div>
+            <div class="box color-5">
+                <div class="label" contenteditable="true">Label 5</div>
+            </div>
         </div>
     </div>
 
     <script>
         document.querySelectorAll('.label').forEach(label => {
-            // Save original text
             const originalText = label.textContent;
 
-            // Handle focus
             label.addEventListener('focus', () => {
                 if (label.textContent === originalText) {
                     label.textContent = '';
                 }
             });
 
-            // Handle blur
             label.addEventListener('blur', () => {
                 if (label.textContent.trim() === '') {
                     label.textContent = originalText;
                 }
             });
 
-            // Prevent new lines on Enter
             label.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
