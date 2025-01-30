@@ -15,13 +15,13 @@
         .container {
            display: grid;
            grid-template-columns: repeat(1, auto);
-           gap: 40px; /* Increased gap for label space */
+           gap: 40px;
            justify-content: center;
         }
 
         .box-wrapper {
             position: relative;
-            margin-top: 30px; /* Space for label */
+            margin-top: 40px; /* Space for the label */
         }
 
         .box {
@@ -42,25 +42,25 @@
 
         .label {
             position: absolute;
-            top: -25px; /* Position above the box */
-            right: 10px;
+            top: -30px; /* Position above the box */
+            left: 10px;
             color: #333;
             font-weight: 600;
             font-size: 1rem;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 8px;
             background: rgba(255,255,255,0.9);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             cursor: text;
             transition: all 0.2s ease;
-            min-width: 80px;
-            text-align: center;
+            min-width: 120px;
+            border: none;
+            outline: none;
         }
 
         .label:focus {
-            outline: none;
             background: white;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
         }
 
         .box.color-1 { background-color: #FF6B6B; }
@@ -97,7 +97,7 @@
     <script>
         document.querySelectorAll('.label').forEach(label => {
             // Save original text
-            let originalText = label.textContent;
+            const originalText = label.textContent;
 
             // Handle focus
             label.addEventListener('focus', () => {
@@ -113,7 +113,7 @@
                 }
             });
 
-            // Prevent Enter key from creating new lines
+            // Prevent new lines on Enter
             label.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
