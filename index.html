@@ -25,7 +25,7 @@
         }
 
         .box {
-            width: 400px;
+            width: 350px;
             height: 175px;
             border-radius: 32px;
             box-shadow: 
@@ -55,8 +55,7 @@
             border-radius: 12px;
             cursor: text;
             transition: all 0.2s ease;
-            min-width: 120px;
-            max-width: 150px;
+            width: 200px;
             text-align: center;
             border: none;
             background-color: grey;
@@ -69,7 +68,7 @@
         }
 
         .input-container {
-            width: 90%;
+            width: 80%;
             display: flex;
             gap: 10px;
         }
@@ -84,11 +83,11 @@
 
         .input-container input[type="text"] {
             flex: 1;
-            max-width: 70%;
+            max-width: 80%;
         }
 
         .input-container input[type="number"] {
-            width: 80px;
+            width: 40px;
         }
 
         .box.color-1 { background-color: #FF6B6B; }
@@ -107,7 +106,7 @@
         }
 
         .box.color-add:hover {
-            background-color: #d0d0d0;
+            background-color: grey;
         }
 
         .add-button {
@@ -157,7 +156,7 @@
 
                 const newLabel = document.createElement('input');
                 newLabel.className = 'label';
-                newLabel.placeholder = "Label";
+                newLabel.placeholder = "List Description";
                 newLabel.maxLength = 20;
 
                 const newBox = document.createElement('div');
