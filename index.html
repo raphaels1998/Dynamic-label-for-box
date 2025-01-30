@@ -29,12 +29,42 @@
                 0 10px 20px rgba(0,0,0,0.1),
                 inset 0 -8px 12px rgba(0,0,0,0.1),
                 inset 0 2px 4px rgba(255,255,255,0.5);
-            
             background-image: linear-gradient(
                 145deg,
                 rgba(255,255,255,0.15) 0%,
                 rgba(255,255,255,0) 80%
             );
+        }
+
+        .label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            padding: 8px 16px;
+            border-radius: 24px;
+            cursor: text;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .label.editable {
+            background: rgba(0,0,0,0.15);
+        }
+
+        .label.editable:hover {
+            background: rgba(0,0,0,0.25);
+        }
+
+        .label:focus {
+            outline: none;
+            user-select: text;
+            background: rgba(0,0,0,0.3);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
         }
 
         .box.color-1 { background-color: #FF6B6B; }
@@ -46,11 +76,42 @@
 </head>
 <body>
     <div class="container">
-         <div class="box color-1"></div>
-         <div class="box color-2"></div>
-         <div class="box color-3"></div>
-         <div class="box color-4"></div>
-         <div class="box color-5"></div>
+         <div class="box color-1"><div class="label editable" contenteditable="true">Label 1</div></div>
+         <div class="box color-2"><div class="label editable" contenteditable="true">Label 2</div></div>
+         <div class="box color-3"><div class="label editable" contenteditable="true">Label 3</div></div>
+         <div class="box color-4"><div class="label editable" contenteditable="true">Label 4</div></div>
+         <div class="box color-5"><div class="label editable" contenteditable="true">Label 5</div></div>
     </div>
+
+    <script>
+        document.querySelectorAll('.label.editable').forEach(label => {
+            // Save initial text
+            let originalText = label.textContent;
+            
+            // Handle focus
+            label.addEventListener('focus', () => {
+                label.style.userSelect = 'text';
+                if (label.textContent === originalText) {
+                    label.textContent = '';
+                }
+            });
+
+            // Handle blur (when losing focus)
+            label.addEventListener('blur', () => {
+                label.style.userSelect = 'none';
+                if (label.textContent.trim() === '') {
+                    label.textContent = originalText;
+                }
+            });
+
+            // Prevent Enter key from creating new lines
+            label.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    label.blur();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
