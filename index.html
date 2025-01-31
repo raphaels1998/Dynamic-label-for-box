@@ -32,7 +32,6 @@
                         0 10px 20px rgba(0,0,0,0.1),
                         inset 0 -8px 12px rgba(0,0,0,0.1),
                         inset 0 2px 4px rgba(255,255,255,0.5);
-            background-image: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -51,8 +50,7 @@
             width: 200px;
             text-align: center;
             border: none;
-            background-color: grey;
-            color: black;
+            color: white;
         }
 
         .input-container {
@@ -77,6 +75,7 @@
 
         .input-container input[type="number"] {
             width: 60px;
+            background: white;
         }
 
         .delete-button {
@@ -85,14 +84,22 @@
             font-size: 1.2rem;
             cursor: pointer;
             color: red;
-            margin-left: -20px;
+            margin-left: -10px;
         }
 
+        /* Background colors for rectangles */
         .box.color-1 { background-color: #FF6B6B; }
         .box.color-2 { background-color: #4ECDC4; }
         .box.color-3 { background-color: #45B7D1; }
         .box.color-4 { background-color: #96CEB4; }
         .box.color-5 { background-color: #FFEEAD; color: black; }
+
+        /* Matching label colors */
+        .box.color-1 + .label { background-color: #FF6B6B; }
+        .box.color-2 + .label { background-color: #4ECDC4; }
+        .box.color-3 + .label { background-color: #45B7D1; }
+        .box.color-4 + .label { background-color: #96CEB4; }
+        .box.color-5 + .label { background-color: #FFEEAD; color: black; }
 
         .box.color-add {
             background-color: #e0e0e0;
@@ -117,8 +124,8 @@
 <body>
     <div class="container">
         <div class="box-wrapper">
-            <input class="label" placeholder="List Description" maxlength="20">
             <div class="box color-1"></div>
+            <input class="label" placeholder="List Description" maxlength="20">
         </div>
         <div class="box-wrapper add-box">
             <div class="box color-add">
@@ -149,6 +156,7 @@
                 qtyInput.min = 0;
                 qtyInput.max = 9999;
                 qtyInput.maxLength = 4;
+                qtyInput.disabled = true; // Initially disabled
 
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
@@ -156,6 +164,14 @@
                 deleteButton.addEventListener('click', () => {
                     box.removeChild(inputContainer);
                     checkAndRestoreInputs(box);
+                });
+
+                // Enable qty only when item name is filled
+                itemInput.addEventListener('input', () => {
+                    qtyInput.disabled = !itemInput.value.trim();
+                    if (!itemInput.value.trim()) {
+                        qtyInput.value = ''; // Reset qty when input is cleared
+                    }
                 });
 
                 itemInput.addEventListener('keydown', (event) => {
@@ -189,17 +205,17 @@
                 const newBoxWrapper = document.createElement('div');
                 newBoxWrapper.className = 'box-wrapper';
 
+                const newBox = document.createElement('div');
+                newBox.className = `box ${colors[boxCount % colors.length]}`;
+
                 const newLabel = document.createElement('input');
                 newLabel.className = 'label';
                 newLabel.placeholder = "List Description";
                 newLabel.maxLength = 20;
-
-                const newBox = document.createElement('div');
-                newBox.className = `box ${colors[boxCount % colors.length]}`;
                 newLabel.style.backgroundColor = getComputedStyle(newBox).backgroundColor;
 
-                newBoxWrapper.appendChild(newLabel);
                 newBoxWrapper.appendChild(newBox);
+                newBoxWrapper.appendChild(newLabel);
                 container.insertBefore(newBoxWrapper, addBox);
                 boxCount++;
 
