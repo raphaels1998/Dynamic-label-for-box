@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Labeled Boxes</title>
+    <title>Dynamic Item List</title>
     <style>
         body {
             display: flex;
@@ -26,7 +26,7 @@
 
         .box {
             width: 350px;
-            height: 175px;
+            min-height: 175px;
             border-radius: 32px;
             box-shadow: 
                 0 2px 10px rgba(0,0,0,0.1),
@@ -66,6 +66,7 @@
             width: 80%;
             display: flex;
             gap: 10px;
+            margin-bottom: 10px;
         }
 
         .input-container input {
@@ -122,33 +123,13 @@
                 </div>
             </div>
         </div>
-        <div class="box-wrapper add-box">
-            <div class="box color-add">
-                <div class="add-button">+</div>
-            </div>
-        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const container = document.querySelector('.container');
-            const addBox = document.querySelector('.add-box');
-            const colors = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5'];
-            let boxCount = document.querySelectorAll('.box-wrapper:not(.add-box)').length;
+            const boxes = document.querySelectorAll('.box');
 
-            function createNewBox() {
-                const newBoxWrapper = document.createElement('div');
-                newBoxWrapper.className = 'box-wrapper';
-
-                const newLabel = document.createElement('input');
-                newLabel.className = 'label';
-                newLabel.placeholder = "List Description";
-                newLabel.maxLength = 20;
-
-                const newBox = document.createElement('div');
-                newBox.className = `box ${colors[boxCount % colors.length]}`;
-                newLabel.style.backgroundColor = getComputedStyle(newBox).backgroundColor;
-
+            function addNewRow(box) {
                 const inputContainer = document.createElement('div');
                 inputContainer.className = 'input-container';
 
@@ -163,60 +144,65 @@
                 qtyInput.min = 0;
                 qtyInput.max = 9999;
                 qtyInput.maxLength = 4;
+                qtyInput.disabled = true; // Initially disabled
 
-                // Shift focus from "Item Name" to "Qty" when Enter is pressed
+                // Ensure item name is filled before allowing qty input
+                itemInput.addEventListener('input', () => {
+                    qtyInput.disabled = !itemInput.value.trim();
+                });
+
+                // Shift focus from Item Name to Qty when Enter is pressed
                 itemInput.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        qtyInput.focus();
+                        if (itemInput.value.trim() !== "") {
+                            qtyInput.focus();
+                        }
                     }
                 });
 
-                // Create a new box when pressing Enter on "Qty" input
+                // Add a new input row when Enter is pressed in Qty
                 qtyInput.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        createNewBox();
+                        addNewRow(box);
                     }
                 });
 
                 inputContainer.appendChild(itemInput);
                 inputContainer.appendChild(qtyInput);
-                newBox.appendChild(inputContainer);
+                box.appendChild(inputContainer);
 
-                newBoxWrapper.appendChild(newLabel);
-                newBoxWrapper.appendChild(newBox);
-
-                container.insertBefore(newBoxWrapper, addBox);
-                boxCount++;
-
-                // Automatically focus on the new item input
+                // Automatically focus the new Item Name input
                 itemInput.focus();
             }
 
-            // Event listener for the add button
-            addBox.addEventListener('click', createNewBox);
+            // Attach event listeners to existing input fields
+            boxes.forEach(box => {
+                const itemInput = box.querySelector('input[type="text"]');
+                const qtyInput = box.querySelector('input[type="number"]');
 
-            // Attach event listeners to existing inputs
-            document.querySelectorAll('.box-wrapper:not(.add-box)').forEach(wrapper => {
-                const itemInput = wrapper.querySelector('input[type="text"]');
-                const qtyInput = wrapper.querySelector('input[type="number"]');
+                qtyInput.disabled = true; // Disable qty initially
 
-                if (itemInput && qtyInput) {
-                    itemInput.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter') {
-                            event.preventDefault();
+                itemInput.addEventListener('input', () => {
+                    qtyInput.disabled = !itemInput.value.trim();
+                });
+
+                itemInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        if (itemInput.value.trim() !== "") {
                             qtyInput.focus();
                         }
-                    });
+                    }
+                });
 
-                    qtyInput.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter') {
-                            event.preventDefault();
-                            createNewBox();
-                        }
-                    });
-                }
+                qtyInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addNewRow(box);
+                    }
+                });
             });
         });
     </script>
